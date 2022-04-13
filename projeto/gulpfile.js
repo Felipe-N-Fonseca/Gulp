@@ -74,7 +74,12 @@ gulp.task('serve', function(){
     gulp.watch('./src/**/*').on('change', reload)
 })
 
-const process = parallel( tarefasHTML, tarefasCSS, tarefasJS)
+function end(callback){
+    console.log('Tasks completadas com sucesso')
+    return callback()
+}
+
+const process = parallel( tarefasHTML, tarefasCSS, tarefasJS, end)
 
 exports.styles = tarefasCSS
 exports.scripts = tarefasJS
