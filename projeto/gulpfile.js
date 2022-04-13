@@ -6,12 +6,15 @@ const rename = require('gulp-rename')
 const image = require('gulp-imagemin')
 const stripJs = require('gulp-strip-comments')
 const stripCss = require('gulp-strip-css-comments')
+const htmlmin = require('gulp-htmlmin')
+const { series, parallel } = require('gulp')
 
-function tarefasCSS(cb){
-    return gulp.src([
+function tarefasCSS(callback){
+    gulp.src([
         './node_modules/bootstrap/dist/css/bootstrap.css',
         './node_modules/@fortawesome/fontawesome-free/css/fontawesome.css',
         './vendor/owl/css/owl.css',
+        './vendor/jquery-ui/jquery-ui.css',
         './src/css/style.css'
     ])
         .pipe(stripCss())
@@ -19,12 +22,15 @@ function tarefasCSS(cb){
         .pipe(cssmin())
         .pipe(rename({suffix: '.min'}))
         .pipe(gulp.dest('./dist/CSS'))
+    return callback()
 }
-function tarefasJS(){
-    return gulp.src([
+function tarefasJS(callback){
+    gulp.src([
         './node_modules/jquery/dist/jquery.js',
         './node_modules/bootstrap/dist/js/bootstrap.js',
         './vendor/owl/js/owl.js',
+        './vendor/jquery-mask/jquery.mask.js',
+        './vendor/jquery-ui/jquery-ui.js',
         './src/js/custom.js'
     ])
         .pipe(stripJs())
@@ -32,6 +38,7 @@ function tarefasJS(){
         .pipe(uglify())
         .pipe(rename({suffix: '.min'}))
         .pipe(gulp.dest('./dist/JS'))
+    return callback()
 }
 function tarefasImagens(){
     return gulp.src('./src/images/*')
@@ -48,8 +55,14 @@ function tarefasImagens(){
         }))
         .pipe(gulp.dest('./dist/images'))
 }
-
+function tarefasHTML(callback){
+    gulp.src('./src/**/*.html')
+        .pipe(htmlmin({collapseWhitespace: true}))
+        .pipe(gulp.dest('./dist'))
+    return callback()
+}
 
 exports.styles = tarefasCSS
 exports.scripts = tarefasJS
 exports.images = tarefasImagens
+exports.default = parallel( tarefasHTML, tarefasCSS, tarefasJS)
