@@ -8,6 +8,7 @@ const stripJs = require('gulp-strip-comments')
 const stripCss = require('gulp-strip-css-comments')
 const htmlmin = require('gulp-htmlmin')
 const { series, parallel } = require('gulp')
+const babel = require('gulp-babel')
 
 function tarefasCSS(callback){
     gulp.src([
@@ -33,7 +34,7 @@ function tarefasJS(callback){
         './vendor/jquery-ui/jquery-ui.js',
         './src/js/custom.js'
     ])
-        .pipe(stripJs())
+        .pipe(babel({comments:false, presets: ['@babel/env']}))
         .pipe(concat('script.js'))
         .pipe(uglify())
         .pipe(rename({suffix: '.min'}))
